@@ -1,0 +1,48 @@
+{
+	"name": "neonlauncher",
+	"productName": "Neon Launcher",
+	"private": true,
+	"version": "1.0.0b1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev",
+		"electron": "electron electron/main.cjs",
+		"build": "vite build && node fix-paths.js",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''",
+		"dev:all": "concurrently \"vite dev\" \"wait-on http://localhost:5173 && electron electron/main.cjs\"",
+		"dist": "vite build && node fix-paths.js && electron-builder"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^7.0.1",
+		"@sveltejs/adapter-static": "^3.0.10",
+		"@sveltejs/kit": "^2.57.0",
+		"@sveltejs/vite-plugin-svelte": "^7.0.0",
+		"concurrently": "^9.2.1",
+		"electron": "^42.0.0",
+		"electron-builder": "^26.8.1",
+		"svelte": "^5.55.2",
+		"vite": "^8.0.7",
+		"wait-on": "^9.0.5"
+	},
+	"dependencies": {
+		"electron-serve": "^3.0.1",
+		"minecraft-java-core": "^4.2.7"
+	},
+	"main": "electron/main.cjs",
+	"build": {
+		"appId": "com.neonlauncher.app",
+		"files": [
+			"build/**/*",
+			"electron/**/*"
+		],
+		"directories": {
+			"output": "dist"
+		},
+		"extraMetadata": {},
+		"asar": false,
+		"buildVersion": "1.0.0b1",
+		"electronVersion": "42.0.0",
+		"icon": "static/icon.png"
+	}
+}
