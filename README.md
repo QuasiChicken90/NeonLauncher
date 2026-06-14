@@ -11,4 +11,4 @@ A minimal Minecraft: Java Edition launcher.
 - Customisation
 
 ## 🚀 Installation
-- Download release from [releases](https://github.com/QuasiChicken90/NeonLauncher/releases/)
+- Download release (coming soon) from [releases](https://github.com/QuasiChicken90/NeonLauncher/releases/)
