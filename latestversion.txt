@@ -1,1 +1,1 @@
-Neon.Launcher.Setup.1.0.0-b1.exe 
+Neon.Launcher.Setup.1.0.0-b1
