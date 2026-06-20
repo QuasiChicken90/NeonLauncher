@@ -72,6 +72,34 @@ $: filteredList = versionlist.filter(instance =>
     instance.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+
+let versionSearch = "";
+let dropdownOpen = false;
+
+$: filteredVersions = versions.filter(v =>
+v.id.toLowerCase().includes(versionSearch.toLowerCase())
+);
+
+function selectVersion(id) {
+instanceVersion = id;
+versionSearch = id;
+dropdownOpen = false;
+}
+
+let platformOpen = false;
+const platforms = [
+  { value: "vanilla", label: "Vanilla" },
+  { value: "fabric", label: "Fabric" },
+  { value: "forge", label: "Forge" },
+  { value: "quilt", label: "Quilt" },
+];
+
+function selectPlatform(value) {
+  instancePlatform = value;
+  platformOpen = false;
+}
+
+
 </script>
 
 <main>
@@ -93,19 +121,54 @@ $: filteredList = versionlist.filter(instance =>
     <input class="inptName" bind:value={instanceName} type="text" placeholder="Instance Name" />
     <br><br>
 
-    <input bind:value={instanceVersion} class="inptVersions" list="version-list" placeholder="Select or search version. Click the arrow ->" autocomplete="off" />
-    <datalist id="version-list">
-        {#each versions as v}
-        <option value={v.id}></option>
-        {/each}
-    </datalist>
+<div class="versionDropdownWrapper">
+  <input
+    class="inptVersions"
+    bind:value={versionSearch}
+    on:focus={() => dropdownOpen = true}
+    on:input={() => { dropdownOpen = true; instanceVersion = ""; }}
+    on:blur={() => setTimeout(() => dropdownOpen = false, 150)}
+    placeholder="Search version..."
+    autocomplete="off"
+  />
+  {#if dropdownOpen && filteredVersions.length > 0}
+    <div class="versionDropdown">
+      {#each filteredVersions as v}
+        <div
+          class="versionOption"
+          on:mousedown={() => selectVersion(v.id)}
+        >
+          {v.id}
+        </div>
+      {/each}
+    </div>
+  {/if}
+</div>
 
-    <br><br>
-    <select bind:value={instancePlatform} class="inptPlatform">
-  <option value="vanilla">Vanilla</option>
-  <option value="fabric">Fabric</option>
-  <option value="forge">Forge</option>
-    </select>
+    <br>
+<div class="platformDropdownWrapper">
+  <button
+    type="button"
+    class="inptPlatform"
+    on:click={() => platformOpen = !platformOpen}
+  >
+    {platforms.find(p => p.value === instancePlatform)?.label ?? "Select Platform"}
+    <i class="fa-solid fa-chevron-down chevronIcon" class:rotated={platformOpen}></i>
+  </button>
+
+  {#if platformOpen}
+    <div class="versionDropdown">
+      {#each platforms as p}
+        <div
+          class="versionOption"
+          on:mousedown={() => selectPlatform(p.value)}
+        >
+          {p.label}
+        </div>
+      {/each}
+    </div>
+  {/if}
+</div>
     <br><br>
     <button class="btnCreateInstance" on:click={completeConfig}>Create</button>
     <br><br>
@@ -125,7 +188,7 @@ $: filteredList = versionlist.filter(instance =>
         id={instance.name}
         on:click={() => goToPlay(instance)}
       >
-        Use
+        Select
       </button>
     </div>
   {/each}
@@ -169,6 +232,7 @@ $: filteredList = versionlist.filter(instance =>
     flex-shrink: 0;
     padding-left: 30px;
     padding-right: 30px;
+    font-weight: 800;
 }
 
 .ContentArea {
@@ -280,10 +344,10 @@ $: filteredList = versionlist.filter(instance =>
         height: 45px;
         padding-left: 10px;
         padding-right: 10px;
-        background: linear-gradient(135deg, rgba(228, 228, 228, 0.01) 100%, rgba(206, 206, 206, 0.01) 0%);
+        background: rgba(0, 0, 0, 0.2);
         border: none;
-        box-shadow: 0px 3.87826px 53.1322px #000000, inset 1.3834px 1.3834px 2.76681px rgba(255, 255, 255, 0.3), inset -1.3834px -1.3834px 2.76681px rgba(87, 87, 87, 0.5);
-        backdrop-filter: blur(7.05723px);
+        
+        backdrop-filter: blur(0);
         border-radius: 47.5px;
         color: white;
         font-weight: 600;
@@ -336,17 +400,26 @@ $: filteredList = versionlist.filter(instance =>
     .btnCreateInstance {
         width: 100%;
         font-weight: 800;
+        
+    }
+
+    .btnCreate {
+      box-shadow: 0px 3.87826px 53.1322px #000000, inset 1.3834px 1.3834px 2.76681px rgba(255, 255, 255, 0.3), inset -1.3834px -1.3834px 2.76681px rgba(87, 87, 87, 0.5);
+    }
+
+    .btnCreate:active {
+      box-shadow: none;
     }
 
     .btnCloseBox {
         width: 100%;
-        color: rgba(255, 61, 61, 0.589);
+        color: rgba(255, 61, 61, 0.8);
         font-weight: 800;
     }
 
     .inptName {
         width: 100%;
-        height: 40px;
+        height: 50px;
         border: none;
         color: white;
         background: linear-gradient(135deg, rgba(228, 228, 228, 0.01) 100%, rgba(206, 206, 206, 0.01) 0%);
@@ -354,7 +427,7 @@ $: filteredList = versionlist.filter(instance =>
         box-shadow: 0px 3.87826px 53.1322px #000000, inset 1.3834px 1.3834px 2.76681px rgba(255, 255, 255, 0.3), inset -1.3834px -1.3834px 2.76681px rgba(87, 87, 87, 0.5);
         backdrop-filter: blur(7.05723px);
         border-radius: 256px;
-        padding: 8px 12px;
+        padding: 8px 24px;
         box-sizing: border-box;
     }
 
@@ -375,7 +448,7 @@ $: filteredList = versionlist.filter(instance =>
 
     .inptVersions{
         width: 100%;
-        height: 40px;
+        height: 50px;
         border: none;
         color: white;
         background: linear-gradient(135deg, rgba(228, 228, 228, 0.01) 100%, rgba(206, 206, 206, 0.01) 0%);
@@ -383,7 +456,7 @@ $: filteredList = versionlist.filter(instance =>
         box-shadow: 0px 3.87826px 53.1322px #000000, inset 1.3834px 1.3834px 2.76681px rgba(255, 255, 255, 0.3), inset -1.3834px -1.3834px 2.76681px rgba(87, 87, 87, 0.5);
         backdrop-filter: blur(7.05723px);
         border-radius: 256px;
-                padding: 8px 12px;
+                padding: 8px 24px;
         box-sizing: border-box;
         
     }
@@ -395,7 +468,7 @@ $: filteredList = versionlist.filter(instance =>
 
         .inptPlatform{
         width: 100%;
-        height: 40px;
+        height: 50px;
         border: none;
         color: white;
         background: linear-gradient(135deg, rgba(228, 228, 228, 0.01) 100%, rgba(206, 206, 206, 0.01) 0%);
@@ -403,7 +476,7 @@ $: filteredList = versionlist.filter(instance =>
         box-shadow: 0px 3.87826px 53.1322px #000000, inset 1.3834px 1.3834px 2.76681px rgba(255, 255, 255, 0.3), inset -1.3834px -1.3834px 2.76681px rgba(87, 87, 87, 0.5);
         backdrop-filter: blur(7.05723px);
         border-radius: 256px;
-                padding: 8px 12px;
+                padding: 8px 24px;
         box-sizing: border-box;
     }
 
@@ -415,4 +488,63 @@ $: filteredList = versionlist.filter(instance =>
     option {
         background-color: #1e1e1e;
     }
+
+    .versionDropdownWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.versionDropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: rgb(29, 29, 29);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 24px;
+  box-shadow: 0px 8px 32px #000;
+  z-index: 99999;
+  box-sizing: border-box;
+  padding: 6px;
+}
+
+.versionOption {
+  padding: 8px 16px;
+  color: white;
+  border-radius: 256px;
+  font-size: 0.9rem;
+}
+
+.versionOption:hover {
+  background: rgb(27, 87, 255);
+}
+
+.platformDropdownWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.inptPlatform {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 24px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.chevronIcon {
+  transition: transform 0.2s ease;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.chevronIcon.rotated {
+  transform: rotate(180deg);
+}
+
 </style>
