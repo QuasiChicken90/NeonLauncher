@@ -1,1 +1,1 @@
-Neon.Launcher.Setup.1.0.0-b1
+Neon.Launcher.Setup.1.0.0-b2
