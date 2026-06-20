@@ -11,7 +11,7 @@
   let status = '';
   let playingVersion = '';
   let viewer = null;
-  const version = 'Neon.Launcher.Setup.1.0.0-b1';
+  const version = 'Neon.Launcher.Setup.1.0.0-b2';
 
   async function loadLoginState() {
     username = await ipcRenderer.invoke("get-username");
