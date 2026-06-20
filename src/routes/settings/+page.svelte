@@ -85,5 +85,6 @@ button:active {
     color: black;
     background-color: white;
     border: none;
+    box-shadow: none;
 }
 </style>
