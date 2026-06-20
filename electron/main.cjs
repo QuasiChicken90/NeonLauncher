@@ -1,6 +1,7 @@
 
 const { app, BrowserWindow, Menu, ipcMain, dialog, shell } = require("electron");
 const serve = require('electron-serve').default;
+const { spawn, exec } = require("child_process");
 
 const { Microsoft, Launch } = require("minecraft-java-core");
 const fs = require("fs");
@@ -8,15 +9,22 @@ const path = require('path');
 const { mkdir } = require('node:fs/promises'); 
 const { writeFile, readSync } = require("node:fs");
 const { writeFileSync } = require('node:fs'); 
+const { pipeline } = require('node:stream/promises');
 
 const logFile = "./launcher.log";
 
 const loadURL = serve({ directory: path.join(__dirname, '../build') });
 
+process.on('unhandledRejection', (reason) => {
+  fs.appendFileSync('./launcher.log', '[UNHANDLED REJECTION] ' + JSON.stringify(reason) + '\n');
+});
+process.on('uncaughtException', (err) => {
+  fs.appendFileSync('./launcher.log', '[UNCAUGHT EXCEPTION] ' + err.stack + '\n');
+});
+
 async function createDir(dirPath, recursive) {
   try {
     await mkdir(dirPath, { recursive: recursive });
-    console.log('Directory ready '+dirPath);
   } catch (err) {
     console.error('Error creating directory:', err);
   }
@@ -228,14 +236,17 @@ ipcMain.handle("start", async (event) => {
 
   const launcher = new Launch();
 
+const isVanilla = config.platform === "vanilla";
+
 const opt = {
   authenticator: mc,
-  path: `NeonLauncherData/${lpath}`,
-  version: config.Version,
+  path: path.join(process.cwd(), `NeonLauncherData/${lpath}`),
+  version: config.Version,          
   loader: {
-    type: config.platform === "vanilla" ? null : config.platform,
+    type: isVanilla ? null : config.platform,
     build: "latest",
-    enable: config.platform !== "vanilla"
+    version: config.Version,
+    enable: !isVanilla
   },
   memory: {
     min: config.memory_min || "1G",
@@ -244,35 +255,41 @@ const opt = {
   JVM_ARGS: config.JVMArgs ? config.JVMArgs.split(" ").filter(s => s.trim() !== "") : [],
 };
 
-  launcher.Launch(opt);
 
-  launcher.on('progress', (progress, size, element) => {
-    event.sender.send('launch-progress', { progress, size, element });
-  });
+launcher.on('progress', (progress, size, element) => {
+  event.sender.send('launch-progress', { progress, size, element });
+});
 
-  launcher.on('check', (progress, size, element) => {
-    event.sender.send('launch-check', { progress, size, element });
-  });
+launcher.on('check', (progress, size, element) => {
+  event.sender.send('launch-check', { progress, size, element });
+});
 
 let gameStarted = false;
 launcher.on('data', (data) => {
-  if (!gameStarted) {
-    gameStarted = true;
-    event.sender.send('launch-started');
-  }
+  if (!gameStarted) { gameStarted = true; event.sender.send('launch-started'); }
   event.sender.send('launch-data', data);
 });
-
 launcher.on('close', (code) => {
-  log("[MC close] exit code: " + code);
   event.sender.send('launch-close', code);
 });
-
 launcher.on('error', (err) => {
-  log("[MC error] " + JSON.stringify(err));
-  event.sender.send('launch-error', err);
+  const errMsg = err ? JSON.stringify(err) : "Unknown/undefined error";
+  log("[MC error] " + errMsg);
+  event.sender.send('launch-error', errMsg);
 });
 
+// launcher.on('error', (err) => {
+//   log("[MC error] type=" + typeof err);
+//   log("[MC error] value=" + String(err));
+//   log("[MC error] json=" + JSON.stringify(err));
+//   log("[MC error] keys=" + (err ? Object.keys(err) : "null"));
+//   if (err && err.error) log("[MC error] .error=" + err.error);
+//   if (err && err.message) log("[MC error] .message=" + err.message);
+//   if (err && err.stack) log("[MC error] .stack=" + err.stack);
+//   event.sender.send('launch-error', String(err));
+// });
+
+  await launcher.Launch(opt);
   return { success: true };
 });
 
@@ -298,6 +315,49 @@ ipcMain.handle("open_directory", (_, dirPath) => {
 
 ipcMain.handle('open_url', async (_, url) => {
     await shell.openExternal(url);
+});
+
+ipcMain.handle("download_update", async () => {
+  try {
+    const versionRes = await fetch("https://raw.githubusercontent.com/QuasiChicken90/NeonLauncher/refs/heads/main/update.txt");
+    const versionText = (await versionRes.text()).trim();
+    const url = `https://github.com/QuasiChicken90/NeonLauncher/releases/latest/download/${versionText}.exe`;
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Download failed: ${response.statusText}`);
+
+    const savePath = path.join(app.getPath("temp"), `${versionText}.exe`);
+    log("[update] saving to: " + savePath);
+
+    const fileStream = fs.createWriteStream(savePath);
+    await pipeline(response.body, fileStream);
+    await new Promise((res, rej) => fileStream.close(e => e ? rej(e) : res()));
+    log("[update] file closed, size: " + fs.statSync(savePath).size);
+
+    const batPath = path.join(app.getPath("temp"), "neon_update.bat");
+    const batContent = `@echo off
+ping 127.0.0.1 -n 4 > nul
+start "" "${savePath}"
+del "%~f0"
+`;
+    fs.writeFileSync(batPath, batContent);
+    // log("[update] bat written to: " + batPath);
+
+    const child = spawn("cmd.exe", ["/c", batPath], {
+      detached: true,
+      stdio: "ignore",
+      windowsHide: true,
+    });
+
+    child.on("error", (err) => log("[update spawn error] " + err.message));
+    child.on("close", (code) => log("[update spawn close] code=" + code));
+    child.unref();
+
+    setTimeout(() => app.quit(), 1000);
+
+  } catch (err) {
+    return { error: err.message };
+  }
 });
 
 function createWindow() {
