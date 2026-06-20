@@ -6,6 +6,7 @@
   import { onMount } from 'svelte';
   $: currentTab = $page.url.pathname.replace('/', '') || 'Home';
 
+
   function showAnnouncement() {
     const overlay = document.getElementById('announcementOverlay');
     console.log('showAnnouncement, overlay found:', overlay);
@@ -17,7 +18,7 @@ function closeAnnouncement() {
   const overlay = document.getElementById('announcementOverlay');
   if (!pane || !overlay) return;
 
-  localStorage.setItem('announcementSeen0001', 'true');
+  localStorage.setItem('announcementSeen0002', 'true');
 
   pane.classList.add('fadeOut');
   overlay.classList.add('fadeOut');
@@ -30,10 +31,12 @@ function closeAnnouncement() {
 }
 
 onMount(() => {
-  if (!localStorage.getItem('announcementSeen0001')) {
+  if (!localStorage.getItem('announcementSeen0002')) {
     showAnnouncement();
   }
 });
+
+
 </script>
 
 <svelte:head>
@@ -51,7 +54,7 @@ onMount(() => {
         <i class="fa-solid fa-house"></i>
       </button>
       <button on:click={() => goto('/library')} class:selected={currentTab === 'library'} style="--i:1">
-        <i class="fa-solid fa-book"></i>
+        <i class="fa-solid fa-bars"></i>
       </button>
       <button on:click={() => goto('/explore')} class:selected={currentTab === 'explore'} style="--i:2">
         <i class="fa-solid fa-compass"></i>
@@ -73,11 +76,24 @@ onMount(() => {
 
   <div class="announcement-overlay" id="announcementOverlay">
     <div class="announcement-container" id="announcementPane">
-      <h1>Beta Release</h1>
+      <h1>Whats New [Beta 2]</h1>
 
       <div class="feature-item">
-        <div class="feature-text">The first beta version. Some features such as easy mod installation and other features are not yet available.</div>
+        <div class="feature-text">New background wallpaper</div>
       </div>
+
+      <div class="feature-item">
+        <div class="feature-text">Quilt support</div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-text">Launcher updating system</div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-text">Other minor improvements</div>
+      </div>
+
 
       <div class="feature-item">
         <div class="feature-text">Check the github page in settings to see more project information and updates.</div>
