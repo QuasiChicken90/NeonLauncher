@@ -2,7 +2,7 @@
 	"name": "neonlauncher",
 	"productName": "Neon Launcher",
 	"private": true,
-	"version": "1.0.0b1",
+	"version": "1.0.0b2",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -27,7 +27,8 @@
 	},
 	"dependencies": {
 		"electron-serve": "^3.0.1",
-		"minecraft-java-core": "^4.2.7"
+		"minecraft-java-core": "^4.2.7",
+		"skin3d": "^0.1.3"
 	},
 	"main": "electron/main.cjs",
 	"build": {
@@ -41,8 +42,16 @@
 		},
 		"extraMetadata": {},
 		"asar": false,
-		"buildVersion": "1.0.0b1",
+		"buildVersion": "1.0.0b2",
 		"electronVersion": "42.0.0",
-		"icon": "static/icon.png"
+		"icon": "static/icon.png",
+		"nsis": {
+			"oneClick": false,
+			"perMachine": false,
+			"allowToChangeInstallationDirectory": false,
+			"deleteAppDataOnUninstall": false,
+			"createDesktopShortcut": true,
+			"createStartMenuShortcut": true
+		}
 	}
 }
