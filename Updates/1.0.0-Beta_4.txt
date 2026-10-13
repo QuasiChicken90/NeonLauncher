@@ -17,6 +17,7 @@ Redesigned play screen with new profile section
 -- Features/Changes
 Icons to differentiate between mod loaders
 New tabs: World map, Skin, Notes/Screenshots (All WIP)
+Frontend rewritten in Vue
 
 -- Backend Changes 
 Completely rewritten backend
