@@ -1,6 +1,5 @@
-Beta 4 changes:
-
-13/14th October 2026
+Beta 3 changes:
+14th October 2026
 
 -- Design
 
