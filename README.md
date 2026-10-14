@@ -19,4 +19,5 @@ https://github.com/user-attachments/assets/dfe497a0-4558-40c0-b8a8-c7572b39c0fd
 - Customization
 
 ## 🚀 Installation
-- Download release (coming soon) from [releases](https://github.com/QuasiChicken90/NeonLauncher/releases/)
+- Download release from [releases](https://github.com/QuasiChicken90/NeonLauncher/releases/)
+- Open NeonLauncher.exe in the extracted folder.
