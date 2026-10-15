@@ -41,11 +41,12 @@ z-index: 10000;
 transition:
     transform 300ms cubic-bezier(.34, 1.56, .64, 1),
     filter 150ms ease;
+    user-select: none;
     
     }
 
     .AlertBasic:hover {
-        transform: translate(-50%, -50%) scale(1.050);
+        transform: translate(-50%, -50%) scale(1.045);
         
     }
 
@@ -69,7 +70,7 @@ transition:
     button {
         height: 48px;
         width: 100%;
-        background: #4693FF;
+        background: var(--activecolor);
         border: none;
         border-radius: 256px;
         font-weight: 700;
