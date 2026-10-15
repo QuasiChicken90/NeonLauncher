@@ -20,7 +20,7 @@ async function logout() {
 onMounted(async () => {
 try {
         const updateURL =
-            "https://raw.githubusercontent.com/QuasiChicken90/NeonLauncher/refs/heads/main/Updates/1.0.0-Beta_3.txt";
+            "https://raw.githubusercontent.com/QuasiChicken90/NeonLauncher/refs/heads/main/Updates/1.0.0-Beta_4.txt";
 
         const response = await fetch(updateURL);
 
@@ -51,7 +51,7 @@ try {
         <AlertBasic
         v-if="alert_notloggedin"
         title="Not logged in"
-        description="You cant logout because you did not login yet. Go to Play to login."
+        description="You can't log out because you didn't login yet. Go to Play to login"
         @close="alert_notloggedin = false"
     />
     
@@ -64,7 +64,7 @@ try {
         <div class="Setting">
             <h2>Logout</h2>
             <p>Logout of current account</p>
-            <button @click="logout()" style="background-color: rgba(255, 0, 0, 0.5);">Logout</button>
+            <button @click="logout()" style="background-color: #db4040;">Logout</button>
         </div>
 
         <div class="Setting">
@@ -87,7 +87,6 @@ try {
     width: 100%;
     height: 100vh;
     z-index: 2;
-
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
