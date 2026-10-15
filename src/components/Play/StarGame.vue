@@ -84,7 +84,7 @@ async function checks() {
       <AlertBasic
         v-if="showAlert"
         title="Error"
-        description="Make sure you are logged in and have selected an instance."
+        description="Make sure you're logged in and have selected an instance"
         @close="showAlert = false"
     />
 
@@ -141,6 +141,7 @@ font-size: 16px;
    transition:
     scale 300ms cubic-bezier(.34, 1.56, .64, 1),
     filter 150ms ease-out;
+    user-select: none;
 }
 
 button:hover {
