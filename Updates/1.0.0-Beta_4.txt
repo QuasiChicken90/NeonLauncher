@@ -1,0 +1,11 @@
+Beta 4 changes:
+15th October 2026
+
+-- Features/Changes
+Minor visual changes
+
+-- Backend Changes 
+More work on Explore page
+
+-- Fixes 
+typo on update checking url
