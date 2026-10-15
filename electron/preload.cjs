@@ -14,7 +14,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     library_createinstance: (name, type, version) =>
         ipcRenderer.invoke('library_createinstance', name, type, version),
     library_selectinstance: (name) => ipcRenderer.invoke('library_selectinstance', name),
-
+    install_resource: (url, instance) => ipcRenderer.invoke('install_resource', url, instance),
     launch_instance: (name) => ipcRenderer.invoke("launch_instance", name),
 
     onDownloadProgress: (callback) => {
