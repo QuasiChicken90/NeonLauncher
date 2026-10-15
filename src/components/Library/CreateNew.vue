@@ -266,7 +266,8 @@ input:active {
 
 input:focus {
     outline: none;
-    outline: rgb(255, 255, 255) 4px solid;
+    outline: var(--activecolor) 4px solid;
+    border-bottom-color: transparent;
 }
 
 input::placeholder {
