@@ -15,8 +15,8 @@ onMounted(async () => {
         showSetup.value = true
     }
 
-    const versionCheck = "https://raw.githubusercontent.com/QuasniChicken90/NeonLauncher/refs/heads/main/latestversion.txt"
-    const currentver = "1.0.0-Beta_3"
+    const versionCheck = "https://raw.githubusercontent.com/QuasiChicken90/NeonLauncher/refs/heads/main/latestversion.txt"
+    const currentver = "1.0.0-Beta_4"
 
     try {
         const response = await fetch(versionCheck, { cache: 'no-store' })
