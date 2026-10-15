@@ -25,7 +25,7 @@ onMounted(loadInstances)
     <AlertBasic
         v-if="showAlert"
         title="Feature Not Available"
-        description="This feature is not available yet."
+        description="This feature is coming soon"
         @close="showAlert = false"
     />
 
@@ -157,7 +157,7 @@ button {
 
 button:hover {
     scale: 1.2;
-    background: #4693FF;
+    background: var(--activecolor);
 }
 
 button:active {
@@ -188,7 +188,7 @@ img:active {
 }
 
 .selectedbtn {
-    background: #4693FF;
+    background: var(--activecolor);
 }
 
 .InstanceButtons {
