@@ -9,6 +9,8 @@ const { pipeline } = require('stream/promises');
 const { Readable } = require('stream');
 const { spawn } = require('child_process');
 
+const allowDevTools = false
+
 const libraryRoot = (() => {
 
   if (!app.isPackaged) return path.join(__dirname, '..', 'Library');
@@ -59,7 +61,7 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
-      devTools: false,
+      devTools: allowDevTools,
       nodeIntegration: false
     }
   });
@@ -546,3 +548,7 @@ ipcMain.handle('update_download', async (event, url) => {
     return { success: false, error: err.message };
   }
 });
+
+ipcMain.handle('install_resource', async (event, url, instance) => {
+  
+})
