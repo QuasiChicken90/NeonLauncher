@@ -47,6 +47,10 @@ function reloadWhenReady() {
   }, 7000)
 }
 
+function cancel() {
+  window.location.reload()
+}
+
 async function loadInstances() {
   instances.value =
     await window.electronAPI.library_getinstancedata()
@@ -252,7 +256,7 @@ onBeforeUnmount(() => {
     ></canvas>
 
     <div class="LoadingBarGlowyThing">
-      
+      <button>Cancel</button>
     </div>
    
   </div>
@@ -433,6 +437,10 @@ onBeforeUnmount(() => {
   to {
     left: 125%;
   }
+}
+
+button {
+  z-index: 999999;
 }
 
 </style>
