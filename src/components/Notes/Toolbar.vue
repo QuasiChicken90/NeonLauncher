@@ -144,7 +144,7 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
 
 .search:focus-within {
-    outline: 3px solid white;
+    outline: 3px solid var(--activecolor);
 }
 
 </style>
