@@ -126,7 +126,7 @@ border: none;
     }
 
 .search:focus-within {
-    outline: 3px solid white;
+    outline: 3px solid var(--activecolor);
 }
 
 </style>
