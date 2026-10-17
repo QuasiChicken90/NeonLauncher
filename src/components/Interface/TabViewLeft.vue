@@ -4,8 +4,8 @@ import { ref } from 'vue'
 import Play from '../../pages/Play.vue'
 import Library from '../../pages/Library.vue'
 import Explore from '../../pages/Explore.vue'
-import Map from '../../pages/Map.vue'
 import Skin from '../../pages/Skin.vue'
+import Map from '../../pages/Map.vue'
 import Notes from '../../pages/Notes.vue'
 import Settings from '../../pages/Settings.vue'
 
@@ -25,59 +25,38 @@ const activeTab = ref(0)
             lastTab: activeTab === 6
         }"
     >
-        <button
-            :class="{ activeTab: activeTab === 0 }"
-            @click="activeTab = 0"
-            v-tooltip="'Play'"
-        >
+        <button :class="{ activeTab: activeTab === 0 }"
+            @click="activeTab = 0" v-tooltip="'Play'">
             <i class="fa-solid fa-play"></i>
         </button>
 
-        <button
-            :class="{ activeTab: activeTab === 1 }"
-            @click="activeTab = 1"
-            v-tooltip="'Library'"
-        >
+        <button :class="{ activeTab: activeTab === 1 }"
+            @click="activeTab = 1" v-tooltip="'Library'">
             <i class="fa-solid fa-bars"></i>
         </button>
 
-        <button
-            :class="{ activeTab: activeTab === 2 }"
-            @click="activeTab = 2"
-            v-tooltip="'Content'"
-        >
+        <button :class="{ activeTab: activeTab === 2 }"
+            @click="activeTab = 2" v-tooltip="'Content'">
             <i class="fa-solid fa-compass"></i>
         </button>
 
-        <button
-            :class="{ activeTab: activeTab === 3 }"
-            @click="activeTab = 3"
-            v-tooltip="'World Map'"
-        >
-            <i class="fa-solid fa-map"></i>
-        </button>
-
-        <button
-            :class="{ activeTab: activeTab === 4 }"
-            @click="activeTab = 4"
-            v-tooltip="'Skin'"
-        >
+        <button :class="{ activeTab: activeTab === 3 }"
+            @click="activeTab = 3" v-tooltip="'Skins'">
             <i class="fa-solid fa-person"></i>
         </button>
 
-        <button
-            :class="{ activeTab: activeTab === 5 }"
-            @click="activeTab = 5"
-            v-tooltip="'Notes'"
-        >
+        <button :class="{ activeTab: activeTab === 4 }"
+            @click="activeTab = 4" v-tooltip="'World Map'">
+            <i class="fa-solid fa-map"></i>
+        </button>
+
+        <button :class="{ activeTab: activeTab === 5 }"
+            @click="activeTab = 5" v-tooltip="'Notes'">
             <i class="fa-solid fa-note-sticky"></i>
         </button>
 
-        <button
-            :class="{ activeTab: activeTab === 6 }"
-            @click="activeTab = 6"
-            v-tooltip="'Settings'"
-        >
+        <button :class="{ activeTab: activeTab === 6 }"
+            @click="activeTab = 6" v-tooltip="'Settings'">
             <i class="fa-solid fa-gear"></i>
         </button>
     </div>
@@ -85,8 +64,8 @@ const activeTab = ref(0)
     <Play v-if="activeTab === 0" />
     <Library v-else-if="activeTab === 1" />
     <Explore v-else-if="activeTab === 2" />
-    <Map v-else-if="activeTab === 3" />
-    <Skin v-else-if="activeTab === 4" />
+    <Skin v-else-if="activeTab === 3" />
+    <Map v-else-if="activeTab === 4" />
     <Notes v-else-if="activeTab === 5" />
     <Settings v-else-if="activeTab === 6" />
 </template>
