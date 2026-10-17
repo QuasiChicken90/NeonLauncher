@@ -1,0 +1,17 @@
+Beta 5 changes:
+17th October 2026
+
+-- Features/Changes
+Explore page is now functional and you can now install mods/shaders/rps
+Moved skins tab
+Added a button to open your Library folder
+
+-- Backend Changes 
+None
+
+-- Fixes 
+None
+
+-- Known Issues
+Sometimes freezes when launching an instance
+Instances above 26.2 may crash
