@@ -17,10 +17,14 @@ async function logout() {
 
 }
 
+async function openlibrary() {
+    await window.electronAPI.opendir()
+}
+
 onMounted(async () => {
 try {
         const updateURL =
-            "https://raw.githubusercontent.com/QuasiChicken90/NeonLauncher/refs/heads/main/Updates/1.0.0-Beta_4.txt";
+            "https://raw.githubusercontent.com/QuasiChicken90/NeonLauncher/refs/heads/main/Updates/1.0.0-Beta_5.txt";
 
         const response = await fetch(updateURL);
 
@@ -65,6 +69,12 @@ try {
             <h2>Logout</h2>
             <p>Logout of current account</p>
             <button @click="logout()" style="background-color: #db4040;">Logout</button>
+        </div>
+
+        <div class="Setting">
+            <h2>Library</h2>
+            <p>View instances and other data</p>
+            <button @click="openlibrary()">Open Library</button>
         </div>
 
         <div class="Setting">
