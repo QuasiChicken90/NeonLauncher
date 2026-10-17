@@ -12,7 +12,6 @@ https://github.com/user-attachments/assets/dfe497a0-4558-40c0-b8a8-c7572b39c0fd
 
 
 # ⬆️ Upcoming Features
-- Easy mod installation directly from the launcher
 - Skin changer
 - Notes & Screenshot management
 - World Map Viewer
