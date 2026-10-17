@@ -10,6 +10,9 @@ https://github.com/user-attachments/assets/dfe497a0-4558-40c0-b8a8-c7572b39c0fd
 
 <img width="1186" height="793" alt="image" src="https://github.com/user-attachments/assets/5793bd1e-bdc4-41a7-ba48-b99961bdda9d" />
 
+<img width="1186" height="793" alt="image" src="https://github.com/user-attachments/assets/985234fc-c9bc-462e-befe-df10ada2da13" />
+
+
 
 # ⬆️ Upcoming Features
 - Skin changer
