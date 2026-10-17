@@ -1,10 +1,16 @@
 <script setup>
-
+import ResourceView from '../components/Explore/ResourceView.vue'
+import AlertBasic from '../components/Interface/AlertBasic.vue'
 import { ref, watch } from 'vue'
 
 const currentTab = ref('Mods')
 const query = ref('')
 const results = ref([])
+
+const selectedProject = ref(null)
+
+const showAlert = ref(false)
+const showAlertError = ref(false)
 
 const tabTypes = {
     'Mods': 'mod',
@@ -34,15 +40,49 @@ async function fetchResults() {
     }
 }
 
+async function onInstall({ instance, version }) {
+    const file = version.files.find(f => f.primary) ?? version.files[0]
+    try {
+        const installed = await window.electronAPI.install_resource(
+            file.url,
+            instance,
+            selectedProject.value.project_type
+        )
+        console.log('installed', installed)
+        showAlert.value = true
+    } catch (err) {
+        console.error(err)
+        showAlertError.value = true
+    }
+}
+
 watch([currentTab, query], fetchResults, { immediate: true })
 
 </script>
 
 <template>
-    <div class="temp">
-        <h1>Coming Soon</h1>
-    </div>
-    
+
+    <AlertBasic
+        v-if="showAlert"
+        title="Resource Installed"
+        description="Your content was installed"
+        @close="showAlert = false"
+    />
+
+    <AlertBasic
+        v-if="showAlertError"
+        title="Resource Was Not Installed"
+        description="Your content was not installed due to an error"
+        @close="showAlert = false"
+    />
+
+<ResourceView
+    v-if="selectedProject"
+    :project="selectedProject"
+    @close="selectedProject = null"
+    @install="onInstall"
+/>
+
 <div class="Toolbar">
     <div class="search">
         <i class="fa-solid fa-magnifying-glass"></i>
@@ -75,8 +115,13 @@ watch([currentTab, query], fetchResults, { immediate: true })
 
 
 <div class="Content">
-    <div class="Resource" v-for="project in results" :key="project.project_id">
-        <img v-if="project.icon_url" :src="project.icon_url" alt="" />
+    <div
+    class="Resource"
+    v-for="project in results"
+    :key="project.project_id"
+    @click="selectedProject = project"
+>
+        <img draggable="false" v-if="project.icon_url" :src="project.icon_url" alt="" />
         <div class="ResourceText">
             <h2>{{ project.title }}</h2>
             <h3>{{ project.author }}</h3>
@@ -181,19 +226,17 @@ i {
     box-sizing: border-box;
     padding: 13px 16px;
     margin-bottom: 20px;
-
-    background: rgba(118, 118, 118, 0.11);
-    border-width: 1px 0px;
+    background: rgba(0, 0, 0, 0.3);
+    border-width: 1px 0px 1px 0px;
     border-style: solid;
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0px 4px 10.2px rgba(0, 0, 0, 0.2);
-    border-radius: 14px;
+    border-color: rgba(70, 58, 240, 0.21);
+    backdrop-filter: blur(24px) saturate(120%);
+    border-radius: 32px;
     backdrop-filter: blur(16px);
     cursor: default;
     user-select: none;
     -webkit-user-drag: none;
 }
-
 
 .Resource:active {
     background-color: var(--activecolor);
@@ -245,22 +288,7 @@ i {
     opacity: 45%;
 }
 
-.Content {
-    opacity: 0; 
-}
 
-h1 {
-  text-align: center;
-  font-weight: 1;
-  color: white;
-}
 
-.temp {
-        width: 100vw;
-        height: 100vh;
-        display: flex;
-        justify-content: center; 
-        align-items: center;    
-}
 
 </style>
