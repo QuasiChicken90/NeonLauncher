@@ -1,6 +1,6 @@
 # Neon Launcher
 A minimal Minecraft: Java Edition launcher.
-
+[![Download BedrockLaunch](https://img.shields.io/sourceforge/dt/neonlauncher.svg)](https://sourceforge.net/projects/neonlauncher/files/latest/download)
 
 <img width="1305" height="849" alt="image" src="https://github.com/user-attachments/assets/0a8d9bcb-7b5e-4b4c-a9fc-ac878ca39879" />
 
