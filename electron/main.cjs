@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, protocol, net } = require("electron");
 const path = require('path');
 const fs = require('fs');
 const { pathToFileURL } = require('url');
+const { exec } = require('node:child_process');
 const { Microsoft, Launch } = require("minecraft-java-core");
 const isDev = !app.isPackaged && !process.env.USE_DIST;
 const activeLaunches = new Map();
@@ -9,6 +10,7 @@ const { pipeline } = require('stream/promises');
 const { Readable } = require('stream');
 const { spawn } = require('child_process');
 
+const DIRS = { mod: 'mods', resourcepack: 'resourcepacks', shader: 'shaders' }
 const allowDevTools = false
 
 const libraryRoot = (() => {
@@ -549,6 +551,96 @@ ipcMain.handle('update_download', async (event, url) => {
   }
 });
 
-ipcMain.handle('install_resource', async (event, url, instance) => {
-  
+async function modrinth(endpoint) {
+  const res = await fetch(`https://api.modrinth.com/v2${endpoint}`, {
+    headers: { 'User-Agent': 'neonlauncher' }
+  })
+  if (!res.ok) throw new Error(`Modrinth request failed (${res.status})`)
+  return res.json()
+}
+
+async function downloadFile(file, dir) {
+  await fs.promises.mkdir(dir, { recursive: true })
+
+  const dest = path.join(dir, path.basename(file.filename))
+  if (fs.existsSync(dest)) return file.filename 
+
+  const res = await fetch(file.url)
+  if (!res.ok) throw new Error(`Download failed for ${file.filename} (${res.status})`)
+
+  await fs.promises.writeFile(dest, Buffer.from(await res.arrayBuffer()))
+  return file.filename
+}
+
+const primaryFile = v => v.files.find(f => f.primary) ?? v.files[0]
+
+async function installDependencies(version, info, modsDir, seen, installed) {
+  const t = info.type.toLowerCase()
+  const loaders = t === 'quilt' ? ['quilt', 'fabric'] : [t]
+
+  for (const dep of version.dependencies ?? []) {
+    if (dep.dependency_type !== 'required' || !dep.project_id) continue
+    if (seen.has(dep.project_id)) continue
+    seen.add(dep.project_id)
+
+    let depVersion
+
+    if (dep.version_id) {
+      depVersion = await modrinth(`/version/${dep.version_id}`)
+    } else {
+      const list = await modrinth(
+        `/project/${dep.project_id}/version` +
+        `?loaders=${encodeURIComponent(JSON.stringify(loaders))}` +
+        `&game_versions=${encodeURIComponent(JSON.stringify([info.version]))}`
+      )
+      depVersion = list[0]
+    }
+
+    if (!depVersion) continue 
+
+    installed.push(await downloadFile(primaryFile(depVersion), modsDir))
+    await installDependencies(depVersion, info, modsDir, seen, installed)
+  }
+}
+
+ipcMain.handle('install_resource', async (event, url, instance, type) => {
+  const folder = DIRS[type]
+  if (!folder) throw new Error(`Unknown resource type: ${type}`)
+
+  if (path.basename(instance) !== instance || !instance.endsWith('.instance')) {
+    throw new Error('Invalid instance')
+  }
+
+  const parsed = new URL(url)
+  if (parsed.hostname !== 'cdn.modrinth.com') throw new Error('Unsupported download source')
+
+  const match = parsed.pathname.match(/\/data\/([^/]+)\/versions\/([^/]+)\//)
+  if (!match) throw new Error('Could not read version from URL')
+  const [, projectId, versionId] = match
+
+  const instancePath = path.join(resolveLib('Instances'), instance)
+  const infoPath = path.join(instancePath, 'Resources', 'InstanceInfo.json')
+  if (!fs.existsSync(infoPath)) throw new Error('Instance not found')
+  const info = JSON.parse(fs.readFileSync(infoPath, 'utf8'))
+
+  const name = instance.slice(0, -'.instance'.length)
+  const baseDir = path.join(instancePath, 'Minecraft', 'instances', name)
+
+  const version = await modrinth(`/version/${versionId}`)
+  const file = version.files.find(f => f.url === url) ?? primaryFile(version)
+
+  const installed = [await downloadFile(file, path.join(baseDir, folder))]
+
+  if (type === 'mod') {
+    await installDependencies(
+      version, info, path.join(baseDir, 'mods'), new Set([projectId]), installed
+    )
+  }
+
+  return installed
+})
+
+
+ipcMain.handle('opendir', async => {
+exec(`explorer.exe ${libraryRoot}`)
 })
