@@ -20,7 +20,7 @@ function completesetup() {
             ></video>
         </div>
 
-        <h2>Create, Manage and Launch instances easily</h2>
+        <h2>Create and manage instances easily and install your favourite mods</h2>
         <p>More features on the way</p>
         <br>
         <button @click="completesetup()">Continue</button>
