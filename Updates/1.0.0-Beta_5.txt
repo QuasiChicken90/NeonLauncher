@@ -5,6 +5,7 @@ Beta 5 changes:
 Explore page is now functional and you can now install mods/shaders/rps
 Moved skins tab
 Added a button to open your Library folder
+Minor visual changes when launching
 
 -- Backend Changes 
 None
