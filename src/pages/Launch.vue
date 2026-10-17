@@ -256,10 +256,11 @@ onBeforeUnmount(() => {
     ></canvas>
 
     <div class="LoadingBarGlowyThing">
-      <button>Cancel</button>
+      
     </div>
    
   </div>
+  <button>Minimize</button>
 </template>
 
 <style scoped>
@@ -291,7 +292,7 @@ onBeforeUnmount(() => {
   transform: translate(-50%, -50%);
   display: block;
   pointer-events: none;
-  animation: moveAcross 4s linear infinite;
+  animation: moveAcross 3s linear infinite;
 }
 
 #skin_reflection_container {
@@ -302,7 +303,7 @@ onBeforeUnmount(() => {
 
   top: calc(50% + 300px);
   left: 50%;
-  filter: blur(16px);
+  filter: blur(14px);
 
   transform: translate(-50%, -50%) scaleY(-1);
   transform-origin: center;
@@ -311,7 +312,7 @@ onBeforeUnmount(() => {
   opacity: 0.3;
   pointer-events: none;
 
-  animation: moveAcrossReflection 4s linear infinite;
+  animation: moveAcrossReflection 3s linear infinite;
 }
 
 @keyframes moveAcross {
@@ -397,6 +398,7 @@ onBeforeUnmount(() => {
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   z-index: 100000;
   text-align: left;
+  user-select: none;
 }
 
 
@@ -437,10 +439,6 @@ onBeforeUnmount(() => {
   to {
     left: 125%;
   }
-}
-
-button {
-  z-index: 999999;
 }
 
 </style>
