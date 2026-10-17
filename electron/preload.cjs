@@ -11,10 +11,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     fs_getusedstorage: () => ipcRenderer.invoke("fs_getusedstorage"),
     
     library_getinstancedata: () => ipcRenderer.invoke("library_getinstancedata"),
+    opendir: () => ipcRenderer.invoke("opendir"),
     library_createinstance: (name, type, version) =>
         ipcRenderer.invoke('library_createinstance', name, type, version),
     library_selectinstance: (name) => ipcRenderer.invoke('library_selectinstance', name),
-    install_resource: (url, instance) => ipcRenderer.invoke('install_resource', url, instance),
+    install_resource: (url, instance, type) => ipcRenderer.invoke("install_resource", url, instance, type),
     launch_instance: (name) => ipcRenderer.invoke("launch_instance", name),
 
     onDownloadProgress: (callback) => {
