@@ -1,11 +1,9 @@
-Beta 5 changes:
-17th October 2026
+Beta 6 changes:
+30th October 2026
 
 -- Features/Changes
-Explore page is now functional and you can now install mods/shaders/rps
-Moved skins tab
-Added a button to open your Library folder
-Minor visual changes when launching
+Launcher themes
+Screenshots tab now functional
 
 -- Backend Changes 
 None
