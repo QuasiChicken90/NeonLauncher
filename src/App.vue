@@ -66,7 +66,7 @@ onMounted(async () => {
     const versionCheck =
         'https://raw.githubusercontent.com/QuasiChicken90/NeonLauncher/refs/heads/main/latestversion.txt'
 
-    const currentver = '1.0.0-Beta_5'
+    const currentver = '1.0.0-Beta_6'
 
     try {
         const response = await fetch(versionCheck, {
