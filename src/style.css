@@ -1,0 +1,24 @@
+:root {
+  --background: #181818;
+  --activecolor: #4071db; 
+}
+
+body {
+  background-color: var(--background);
+  margin: 0px;
+  font-family: 'Inter';
+}
+
+
+  *::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--activecolor) 30%, transparent);
+    border-radius: 10px;
+  }

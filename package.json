@@ -1,0 +1,59 @@
+{
+  "name": "neonlauncher",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron electron/main.cjs\"",
+    "build": "vite build",
+    "dist": "vite build && electron-builder",
+    "preview": "vite preview",
+    "start:dist": "vite build && cross-env USE_DIST=1 electron electron/main.cjs",
+    "pack": "vite build && electron-builder --win dir"
+  },
+  "dependencies": {
+    "@arcships/light-ocr": "^0.5.9",
+    "@fortawesome/fontawesome-free": "^7.3.1",
+    "floating-vue": "^5.4.0",
+    "get-folder-size": "^5.0.0",
+    "minecraft-java-core": "^4.2.9",
+    "skin3d": "^0.2.0",
+    "vue": "^3.5.42"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.8",
+    "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
+    "electron": "^44.3.0",
+    "electron-builder": "^26.15.3",
+    "vite": "^8.3.0",
+    "wait-on": "^9.1.0"
+  },
+  "build": {
+    "appId": "com.neon.launcher",
+    "productName": "NeonLauncher",
+    "executableName": "NeonLauncher",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "Library",
+        "to": "Library"
+      }
+    ],
+    "win": {
+      "target": "portable",
+      "signAndEditExecutable": true,
+      "compression": "store",
+      "asar": true,
+      "signExecutable": true
+    }
+  }
+}
