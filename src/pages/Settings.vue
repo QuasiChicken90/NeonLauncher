@@ -35,7 +35,7 @@ async function applyTheme(num) {
 onMounted(async () => {
 try {
         const updateURL =
-            "https://raw.githubusercontent.com/QuasiChicken90/NeonLauncher/refs/heads/main/Updates/1.0.0-Beta_5.txt";
+            "https://raw.githubusercontent.com/QuasiChicken90/NeonLauncher/refs/heads/main/Updates/1.0.0-Beta_6.txt";
 
         const response = await fetch(updateURL);
 
