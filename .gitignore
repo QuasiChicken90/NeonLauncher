@@ -23,3 +23,7 @@ dist-ssr
 *.sw?
 
 release/*
+
+Library/Config/configuration_setup.json
+Library/Config/configuration.json
+Library/Config/account.json
