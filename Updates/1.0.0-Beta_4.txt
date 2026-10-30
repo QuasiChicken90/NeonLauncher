@@ -1,0 +1,27 @@
+Beta 3 changes:
+14th October 2026
+
+-- Design
+
+Completely new design with a beautiful hand-crafted clean new "neon" design
+Added gentle jelly-like effects to components 
+New redesigned sidebar navigation
+New background
+New library design 
+New simplified create instance design
+New settings design now with changelogs
+New launching screen with reflections, and animations and your own skin
+Redesigned play screen with new profile section
+
+-- Features/Changes
+Icons to differentiate between mod loaders
+New tabs: World map, Skin, Notes/Screenshots (All WIP)
+Frontend rewritten in Vue
+
+-- Backend Changes 
+Completely rewritten backend
+New way of creating instaces and instance structure and instance templates (WIP)
+
+
+-- Fixes 
+New Launcher updating system
