@@ -1,14 +1,40 @@
+
 <script setup>
 import { ref } from 'vue'
+import CreateNew from './CreateNew.vue'
+
 const activeTab = defineModel({ default: 'notes' })
-const emit = defineEmits(['create'])
+
+const emit = defineEmits(['created'])
+
+const createNewDisplay = ref(false)
+
+function openCreate() {
+    if (activeTab.value === 'notes') {
+        createNewDisplay.value = true
+    }
+}
+
+function closeCreate() {
+    createNewDisplay.value = false
+}
+
+function handleCreated(note) {
+    emit('created', note)
+}
 </script>
 
 <template>
+    <CreateNew
+        v-if="createNewDisplay"
+        @close="closeCreate"
+        @created="handleCreated"
+    />
+
     <div class="Toolbar">
         <div class="search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Search..." />
+            <input type="text" placeholder="Search notes and screenshots..." />
         </div>
 
         <div class="DuelTab">
@@ -27,103 +53,73 @@ const emit = defineEmits(['create'])
             </button>
         </div>
 
-        <!-- Only on the Notes tab -->
-<button
-    class="create"
-    :class="{ hidden: activeTab !== 'notes' }"
-    :disabled="activeTab !== 'notes'"
-    @click="emit('create')"
->
-    <i class="fa-solid fa-plus"></i>
-    Create
-</button>
+        <button
+            class="create"
+            :class="{ hidden: activeTab !== 'notes' }"
+            :disabled="activeTab !== 'notes'"
+            @click="openCreate"
+        >
+            <i class="fa-solid fa-plus"></i>
+            Create
+        </button>
     </div>
 </template>
 
 <style scoped>
-    .Toolbar {
-        position: absolute;
-        top: 0px;
-        width: 100%;
-      
+.Toolbar {
+    position: absolute;
+    top: 0;
+    width: 100%;
     height: 50px;
     background: rgba(217, 217, 217, 0.01);
-    border-bottom: 2px solid #000000;
+    border-bottom: 2px solid #000;
     backdrop-filter: blur(12px) saturate(120%);
-        z-index: 256;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        box-sizing: border-box;
-        padding-right: 20px;
-    }
+    z-index: 256;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    box-sizing: border-box;
+    padding-right: 20px;
+}
 
-    h2 {
-        font-weight: 800;
-        user-select: none;
-        -webkit-user-drag: none;
-    }
+.Toolbar button {
+    padding: 0 16px;
+    height: 35px;
+    background: transparent;
+    border-radius: 21.5px;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    margin-right: 9px;
+    border: none;
+}
 
-    .Toolbar button {
-padding-left: 16px;
-padding-right: 16px;
-height: 35px;
+.Toolbar button.selected {
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
 
-background: transparent;
-border-radius: 21.5px;
-color: white;
-font-size: 16px;
-font-weight: 700;
-margin-right: 9px;
-border: none;
-    }
+.Toolbar button:active {
+    opacity: 45%;
+}
 
-        .Toolbar button.selected {
-padding-left: 16px;
-padding-right: 16px;
-height: 40px;
-
-background: rgba(255, 255, 255, 0.1);
-border-radius: 21.5px;
-color: white;
-font-size: 16px;
-font-weight: 700;
-margin-right: 9px;
-border: none;
-border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .Toolbar button:active {
-        opacity: 45%;
-    }
-
-    i {
-        color: white;
-        font-size: 16px;
-        margin-right: 4px;
-    }
-
-.search i {
-    margin-left: 14px;
-    color: rgba(255, 255, 255, 0.6);
+i {
+    color: white;
+    font-size: 16px;
+    margin-right: 4px;
 }
 
 .search {
     position: absolute;
     left: 100px;
-
     width: 40%;
     height: 35px;
-
     display: flex;
     align-items: center;
-
     background: rgba(255, 255, 255, 0.1);
     border-radius: 14px;
-}
-
-.search {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0px 4px 11.3px 2px rgba(0, 0, 0, 0.1);
 }
 
@@ -136,12 +132,14 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     flex: 1;
     height: 100%;
     border: none;
-
     outline: none;
     background: transparent;
     color: white;
     padding-left: 10px;
-     
+}
+
+.search input:active {
+    filter: brightness(80%);
 }
 
 .search input::placeholder {
@@ -149,10 +147,6 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     font-weight: 600;
     font-family: 'Inter';
 }
-
-    .search input:active {
-        filter: brightness(80%);
-    }
 
 .search:focus-within {
     outline: 3px solid var(--activecolor);
