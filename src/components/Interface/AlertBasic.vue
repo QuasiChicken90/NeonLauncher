@@ -33,7 +33,7 @@ gap: 1px;
 max-width: calc(100vw - 40px);
 height: auto;
 
-background: linear-gradient(180deg, rgba(43, 43, 43, 0.1) 52.21%, rgba(18, 29, 45, 0.5) 100%);
+background: linear-gradient(180deg, rgba(43, 43, 43, 0.1) 52.21%, rgba(0, 0, 0, 0.5) 100%);
 box-shadow: 0px 0px 0px 1px #000000;
 backdrop-filter: blur(12px) saturate(150%);
 border-radius: 33px;
