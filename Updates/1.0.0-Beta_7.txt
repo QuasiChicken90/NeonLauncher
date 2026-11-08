@@ -1,5 +1,5 @@
 Beta 7 changes:
-8 November 2026
+8th November 2026
 
 -- Features/Changes
 Notes page now functional
