@@ -29,7 +29,7 @@ async function fetchResults() {
     const facets = encodeURIComponent(
         JSON.stringify([[`project_type:${tabTypes[currentTab.value]}`]])
     )
-    const url = `https://api.modrinth.com/v2/search?query=${encodeURIComponent(query.value)}&facets=${facets}&limit=100`
+    const url = `https://api.modrinth.com/v2/search?query=${encodeURIComponent(query.value)}&facets=${facets}&limit=30`
 
     try {
         const res = await fetch(url)
