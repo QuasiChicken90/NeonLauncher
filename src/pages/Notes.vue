@@ -4,23 +4,43 @@ import Toolbar from '../components/Notes/Toolbar.vue'
 
 const currentTab = ref('notes')
 const screenshots = ref([])
+const notes = ref([])
+
+async function loadNotes() {
+  const list = await window.electronAPI.noteList()
+  notes.value = list.sort((a, b) => b.dateCreated.localeCompare(a.dateCreated))
+}
+
+async function createNote(title, text) {
+  await window.electronAPI.noteCreate(title, text)
+  await loadNotes()
+}
+
+async function deleteNote(id) {
+  await window.electronAPI.noteDelete(id)
+  await loadNotes()
+}
+
+async function onCreated({ title, text }) {
+  await createNote(title, text)
+}
 
 onMounted(async () => {
-
   screenshots.value = await window.electronAPI.getScreenshots()
+  await loadNotes()
 })
 </script>
 
 <template>
-  <Toolbar v-model="currentTab" />
+  <Toolbar v-model="currentTab" @created="onCreated" />
 
   <div class="Notes">
     <div v-if="currentTab === 'notes'" class="NotesGrid">
-      <!-- <div class="Note">
-        <p>Description</p>
-        <p class="date">Date</p>
-      </div> -->
-      <h1>Coming soon. For now, view screenshots</h1>
+      <div class="Note" v-for="note in notes" :key="note.id">
+        <h2>{{ note.title }}</h2>
+        <p>{{ note.noteText }}</p>
+        <p class="date">{{ note.dateCreated }}</p>
+      </div>
     </div>
 
     <div v-if="currentTab === 'screenshots'" class="ScreenshotGrid">
@@ -76,21 +96,19 @@ onMounted(async () => {
 }
 
 .NotesGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 300px);
-    gap: 16px;
-    justify-content: start;
-    align-content: start;
+    columns: 300px;      
+    column-gap: 16px;
     width: 100%;
 }
 
 .Note {
-    width: 300px;
+    width: 100%;          
     min-height: 100px;
     height: fit-content;
+    break-inside: avoid;     
+    margin-bottom: 16px;  
     border: 1px solid rgba(255, 255, 255, 0.151);
     background-color: rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(64px) saturate(1.3);
     border-radius: 24px;
     padding: 24px;
     box-sizing: border-box;
@@ -101,31 +119,24 @@ onMounted(async () => {
     backdrop-filter: blur(24px) saturate(120%);
 }
 
+
 .Note:active {
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .Note p {
     color: white;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;    
 }
+
 
 .Note h2 {
     user-select: none;
 }
 
-.Note p.date {
-    color: rgba(255, 255, 255, 0.7);
-    text-align: right;
-    user-select: none;
-}
-
-.Notes h1 {
-position: absolute;
-top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-weight: 1;
+.Note .date {
+    opacity: 0.7;
 }
 
 </style>
