@@ -5,11 +5,11 @@ import Setup from './components/Setup/New.vue'
 
 import { ref, onMounted } from 'vue'
 
-import background1 from './assets/background_1.jpg'
-import background2 from './assets/background_2.jpg'
-import background3 from './assets/background_3.jpg'
-import background4 from './assets/background_4.jpg'
-import background5 from './assets/background_5.jpg'
+import background1 from './assets/Background_1.jpg'
+import background2 from './assets/Background_2.jpg'
+import background3 from './assets/Background_3.jpg'
+import background4 from './assets/Background_4.jpg'
+import background5 from './assets/Background_5.jpg'
 
 const showSetup = ref(false)
 const updating = ref(false)
@@ -55,6 +55,9 @@ async function getTheme() {
 }
 
 onMounted(async () => {
+
+    const platform = navigator.userAgentData.platform; 
+
     await getTheme()
 
     const setupComplete = await window.electronAPI.launcher_newuser()
@@ -66,7 +69,7 @@ onMounted(async () => {
     const versionCheck =
         'https://raw.githubusercontent.com/QuasiChicken90/NeonLauncher/refs/heads/main/latestversion.txt'
 
-    const currentver = '1.0.0-Beta_6'
+    const currentver = '1.0.0-Beta_7'
 
     try {
         const response = await fetch(versionCheck, {
@@ -90,8 +93,16 @@ onMounted(async () => {
 
         updating.value = true
 
+        const normalizedPlatform = platform.toLowerCase()
+
+    const downloadUrl = normalizedPlatform === 'linux'
+    ? `https://github.com/QuasiChicken90/NeonLauncher/releases/download/${latestver}/${latestver}_linux_x64.zip`
+    : normalizedPlatform === 'macos'
+        ? `https://github.com/QuasiChicken90/NeonLauncher/releases/download/${latestver}/${latestver}_macos_intel.zip`
+        : `https://github.com/QuasiChicken90/NeonLauncher/releases/download/${latestver}/${latestver}.zip`
+
         const result = await window.electronAPI.update_download(
-            `https://github.com/QuasiChicken90/NeonLauncher/releases/download/${latestver}/${latestver}.zip`
+            downloadUrl
         )
 
         if (!result.success) {
