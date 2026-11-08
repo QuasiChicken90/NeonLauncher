@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { Render, RunningAnimation } from 'skin3d'
-import bgplay from '../assets/background_play.png'
+import bgplay from '../assets/Background_play.png'
 
 const skinContainer = ref(null)
 const reflectionContainer = ref(null)
@@ -255,19 +255,20 @@ onBeforeUnmount(() => {
       height="300"
     ></canvas>
 
+ <!--
     <div class="LoadingBarGlowyThing">
       
     </div>
-   
+ -->
   </div>
-  <!-- <button>Minimize</button> -->
+
 </template>
 
 <style scoped>
 .background {
   position: fixed;
   inset: 0;
-  background: black;
+  background: transparent;
   overflow: hidden;
   z-index: 99999;
 }
