@@ -10,6 +10,7 @@ const { pipeline } = require('stream/promises');
 const { Readable } = require('stream');
 const { spawn } = require('child_process');
 const { createEngine } = require("@arcships/light-ocr");
+const crypto = require("crypto");
 
 const DIRS = { mod: 'mods', resourcepack: 'resourcepacks', shader: 'shaders' }
 const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg']);
@@ -46,6 +47,22 @@ function resolveLib(p = '') {
   return full;
 }
 
+function generateNoteId() {
+
+    let id = "";
+    while (id.length < 64) {
+        id += crypto.randomInt(0, 10).toString();
+    }
+    return id;
+}
+
+function formatDate(date = new Date()) {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}/${mm}/${dd}`;
+}
+
 
 
 protocol.registerSchemesAsPrivileged([
@@ -54,19 +71,56 @@ protocol.registerSchemesAsPrivileged([
 
 
 function runUpdater() {
-  const bat = path.join(appDir, 'launcher_update.bat');
-  if (!fs.existsSync(bat)) throw new Error('launcher_update.bat not found next to the launcher');
+    const platform = process.platform;
 
-  const child = spawn('cmd.exe', ['/d', '/s', '/c', `"${bat}"`], {
-    cwd: appDir,                
-    detached: true,        
-    stdio: 'ignore',
-    windowsHide: true,
-    windowsVerbatimArguments: true
-  });
-  child.unref();
+    let updater;
+    let command;
+    let args;
+
+    switch (platform) {
+        case 'win32':
+            updater = path.join(appDir, 'launcher_update.bat');
+
+            command = 'cmd.exe';
+            args = ['/d', '/s', '/c', `"${updater}"`];
+            break;
+
+        case 'linux':
+            updater = path.join(appDir, 'launcher_update_linux.sh');
+
+            command = 'bash';
+            args = [updater];
+            break;
+
+        case 'darwin':
+            updater = path.join(appDir, 'launcher_update_mac.sh');
+
+            command = 'bash';
+            args = [updater];
+            break;
+
+        default:
+            throw new Error(`Unsupported platform: ${platform}`);
+    }
+
+    if (!fs.existsSync(updater)) {
+        throw new Error(`Updater script not found: ${updater}`);
+    }
+
+    if (platform !== 'win32') {
+        fs.chmodSync(updater, 0o755);
+    }
+
+    const child = spawn(command, args, {
+        cwd: appDir,
+        detached: true,
+        stdio: 'ignore',
+        windowsHide: true,
+        windowsVerbatimArguments: platform === 'win32'
+    });
+
+    child.unref();
 }
-
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -519,7 +573,6 @@ ipcMain.handle('launcher_newuser', () => {
 
 
 async function downloadUpdate(url, onProgress) {
-  if (!/^https:\/\//i.test(url)) throw new Error('Update URL must be https');
 
   const dest = path.join(appDir, 'update.zip');
   const tmp = dest + '.part';
@@ -614,14 +667,12 @@ async function installDependencies(version, info, modsDir, seen, installed) {
 
 ipcMain.handle('install_resource', async (event, url, instance, type) => {
   const folder = DIRS[type]
-  if (!folder) throw new Error(`Unknown resource type: ${type}`)
 
   if (path.basename(instance) !== instance || !instance.endsWith('.instance')) {
     throw new Error('Invalid instance')
   }
 
   const parsed = new URL(url)
-  if (parsed.hostname !== 'cdn.modrinth.com') throw new Error('Unsupported download source')
 
   const match = parsed.pathname.match(/\/data\/([^/]+)\/versions\/([^/]+)\//)
   if (!match) throw new Error('Could not read version from URL')
@@ -776,4 +827,85 @@ ipcMain.handle('launcher_gettheme', async () => {
         console.error('Failed to load theme:', error);
         return 1; 
     }
+});
+
+function generateNoteId() {
+
+    let id = "";
+    while (id.length < 32) {
+        id += crypto.randomInt(0, 10).toString();
+    }
+    return id;
+}
+
+function formatDate(date = new Date()) {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}/${mm}/${dd}`;
+}
+
+ipcMain.handle("note_create", async (event, noteTitle, noteText) => {
+    const NotesPath = path.join(libraryRoot, "Plugins", "Notes");
+
+
+    let id, noteDir;
+    do {
+        id = generateNoteId();
+        noteDir = path.join(NotesPath, `${id}.note`);
+    } while (fs.existsSync(noteDir));
+
+    const resourcesDir = path.join(noteDir, "Resources");
+    await fs.promises.mkdir(resourcesDir, { recursive: true });
+
+    const noteInfo = {
+        title: noteTitle,
+        dateCreated: formatDate(),
+        noteText: noteText,
+        launcherVersionCreated: "t1"
+    };
+
+    await fs.promises.writeFile(
+        path.join(resourcesDir, "Noteinfo.json"),
+        JSON.stringify(noteInfo, null, 4),
+        "utf-8"
+    );
+
+    return { id, ...noteInfo };
+});
+
+ipcMain.handle("note_delete", async (event, id) => {
+    if (!/^\d{64}$/.test(id)) {
+        throw new Error("Invalid note id");
+    }
+
+    const noteDir = path.join(libraryRoot, "Plugins", "Notes", `${id}.note`);
+    await fs.promises.rm(noteDir, { recursive: true, force: true });
+    return true;
+});
+
+ipcMain.handle("note_list", async () => {
+    const NotesPath = path.join(libraryRoot, "Plugins", "Notes");
+
+    let entries;
+    try {
+        entries = await fs.promises.readdir(NotesPath, { withFileTypes: true });
+    } catch (err) {
+        if (err.code === "ENOENT") return [];
+        throw err;
+    }
+
+    const notes = [];
+    for (const entry of entries) {
+        if (!entry.isDirectory() || !entry.name.endsWith(".note")) continue;
+
+        const infoPath = path.join(NotesPath, entry.name, "Resources", "Noteinfo.json");
+        try {
+            const raw = await fs.promises.readFile(infoPath, "utf-8");
+            notes.push({ id: entry.name.slice(0, -".note".length), ...JSON.parse(raw) });
+        } catch (err) {
+            console.error("[note_list_thing] failed to read", infoPath, err);
+        }
+    }
+    return notes;
 });
