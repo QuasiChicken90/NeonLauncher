@@ -1,11 +1,12 @@
 <script setup>
 import Toolbar from '../components/Library/Toolbar.vue'
 import AlertBasic from '../components/Interface/AlertBasic.vue'
-import CreateNew from '../components/Library/CreateNew.vue'
+import Instance from '../components/Library/Instance.vue'
 import { ref, onMounted } from 'vue'
 
 const showAlert = ref(false)
 const instances = ref([])
+const openInstanceName = ref(null)
 
 async function loadInstances() {
     instances.value = await window.electronAPI.library_getinstancedata()
@@ -21,11 +22,17 @@ onMounted(loadInstances)
 
 <template>
     <Toolbar @created="loadInstances" />
+
+    <Instance
+    v-if="openInstanceName"
+    :name="openInstanceName"
+    @close="openInstanceName = null"
+/>
     
     <AlertBasic
         v-if="showAlert"
         title="Feature Not Available"
-        description="This feature is coming soon"
+        description="Icon changer is coming soon"
         @close="showAlert = false"
     />
 
@@ -48,11 +55,9 @@ onMounted(loadInstances)
             </div>
 
   <div class="InstanceButtons">
-    <button @click="showAlert = true"
-                
-                alt="">
-        <i class="fa-solid fa-pencil"></i>
-    </button>
+<button @click="openInstanceName = instance.name">
+    <i class="fa-solid fa-pencil"></i>
+</button>
 
 <button
     :class="{ selectedbtn: instance.selected }"
