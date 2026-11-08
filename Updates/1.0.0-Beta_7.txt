@@ -1,1 +1,19 @@
+Beta 7 changes:
+8 November 2026
+
+-- Features/Changes
+Notes page now functional
+Improved launching screen design
+Minor design improvements 
+Edit button for instances now works (Still WIP)
+Improved loading time for explore page (now loads 30 items from 100)
+
+-- Backend Changes 
+Added future support for macOS and Linux 
+
+-- Fixes 
+None
+
+-- Known Issues
+Sometimes freezes/crashes when launching an instance
 
