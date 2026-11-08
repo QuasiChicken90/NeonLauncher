@@ -177,7 +177,7 @@ async function createInstance() {
     position: absolute;
     width: 600px;
     height: auto;
-    background: rgba(134, 134, 134, 0.1);
+    background: rgba(0, 0, 0, 0.3);
     box-shadow: 0px 0px 0px 1px #000000;
     backdrop-filter: blur(14px) saturate(150%);
     top: 0%;
