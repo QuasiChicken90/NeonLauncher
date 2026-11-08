@@ -36,5 +36,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getScreenshots: () => ipcRenderer.invoke('library_getscreenshots'),
 
     launcher_settheme: (num) => ipcRenderer.invoke('launcher_settheme', num),
-    launcher_gettheme: () => ipcRenderer.invoke("launcher_gettheme")
+    launcher_gettheme: () => ipcRenderer.invoke("launcher_gettheme"),
+    noteCreate: (title, text) => ipcRenderer.invoke("note_create", title, text),
+    noteDelete: (id) => ipcRenderer.invoke("note_delete", id),
+    noteList: () => ipcRenderer.invoke("note_list"),
 })
